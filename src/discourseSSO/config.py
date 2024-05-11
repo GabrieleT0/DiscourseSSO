@@ -18,16 +18,16 @@ SSO FLASK Application for Discourse main configuration file
 """
 
 # Discourse URL to send the user back
-DISCOURSE_URL = 'http://discuss.example.com'
+DISCOURSE_URL = 'https://discourse.di.unisa.it/home'
 
 # Secret key shared with the Discourse server
-DISCOURSE_SECRET_KEY = 'd836444a9e4084d5b224a60c208dce14'
+DISCOURSE_SECRET_KEY = b'zyxbotnucrok8Piqwi'
 
 # Attribute to read from the environment after user validation
 DISCOURSE_USER_MAP = {
-    'name': ['givenName', 'sn'],
-    'username': 'username',
-    'external_id': 'eppn',
+    'name': ['cn'],
+    'username': 'cn',
+    'external_id': 'persistent-id',
     'email': 'mail',
     'avatar_url': 'avatar',
     'bio': 'profile',

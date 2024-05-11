@@ -20,9 +20,9 @@ SSO Application tests
 
 from flask import url_for
 import pytest
-from urlparse import urlparse
+from urllib.parse import urlparse
 from werkzeug.exceptions import BadRequest, Forbidden
-from discourseSSO import sso
+from ../discourseSSO import sso
 
 app = sso.app
 

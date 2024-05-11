@@ -28,6 +28,6 @@ To run in a virtual environment add the activation code. Es.:
     activate_this = '/path/to/env/bin/activate_this.py'
     execfile(activate_this, dict(__file__=activate_this))
 """
-
-
+import sys
+sys.path.insert(0,"/var/www/html/DiscourseSSO/venv/lib/python3.8/site-packages")
 from discourseSSO.sso import app as application

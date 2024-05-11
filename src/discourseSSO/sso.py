@@ -19,14 +19,12 @@ The configuration file is defined with the variable "DISCOURSE_SSO_CONFIG",
 for the most significant values look at the sso/default.py file
 """
 
-
 from flask import abort, Flask, redirect, render_template, request, url_for, \
     session
-
 import base64
 import hashlib
 import hmac
-import urllib
+import urllib.parse
 import re
 
 app = Flask(__name__)
@@ -42,9 +40,9 @@ def payload_check():
     correct redirect to the authentication page
     :return: The redirection page to the authentication page
     """
-    payload = request.args.get('sso', '')
+    payload = request.args.get('sso', '').encode()
     signature = request.args.get('sig', '')
-
+    
     app.logger.debug('Request to login with payload="%s" signature="%s"',
                      payload, signature)
     if not payload or not signature:
@@ -54,6 +52,7 @@ def payload_check():
                      app.secret_key)
     app.logger.debug('SSO Secret Key: %s',
                      app.config.get('DISCOURSE_SECRET_KEY'))
+    
     dig = hmac.new(
         app.config.get('DISCOURSE_SECRET_KEY'),
         payload,
@@ -78,6 +77,7 @@ def user_authz():
     attribute_map = app.config.get('DISCOURSE_USER_MAP')
     user_flag_filters = app.config.get('DISCOURSE_USER_FLAGS')
     email = request.environ.get(attribute_map['email'])
+    email = email.split(';')[0]
     external_id = request.environ.get(attribute_map['external_id'])
     if not (email and external_id):
         abort(403)
@@ -99,15 +99,16 @@ def user_authz():
                      name, username, email)
     if 'nonce' not in session:
         abort(403)
-    query = (session['nonce'] +
+    nonce = session['nonce'].decode('utf-8')
+    query = (nonce +
              '&name=' + name +
              '&username=' + username +
-             '&email=' + urllib.quote(email) +
-             '&external_id=' + urllib.quote(external_id))
+             '&email=' + urllib.parse.quote(email) +
+             '&external_id=' + urllib.parse.quote(external_id))
     if avatar_url:
-        query = query + '&avatar_url=' + urllib.quote(avatar_url)
+        query = query + '&avatar_url=' + urllib.parse.quote(avatar_url)
     if bio:
-        query = query + '&bio=' + urllib.quote(bio)
+        query = query + '&bio=' + urllib.parse.quote(bio)
     flags = {}
     for user_flag in user_flag_filters:
         if 'filter' in user_flag:
@@ -121,9 +122,9 @@ def user_authz():
     for flags_name in sorted(flags.keys()):
         query = query + '&' + flags_name + '=' + flags[flags_name]
     app.logger.debug('Query string to return: %s', query)
-    query_b64 = base64.encodestring(query)
+    query_b64 = base64.b64encode(query.encode('utf-8'))
     app.logger.debug('Base64 query string to return: %s', query_b64)
-    query_urlenc = urllib.quote(query_b64)
+    query_urlenc = urllib.parse.quote(query_b64)
     app.logger.debug('URLEnc query string to return: %s', query_urlenc)
     sig = hmac.new(
         app.config.get('DISCOURSE_SECRET_KEY'),
@@ -135,7 +136,6 @@ def user_authz():
                     '/session/sso_login?'
                     'sso=' + query_urlenc +
                     '&sig=' + sig)
-
     return redirect(redirect_url)
 
 
