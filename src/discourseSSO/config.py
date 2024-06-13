@@ -27,7 +27,7 @@ DISCOURSE_SECRET_KEY = b'zyxbotnucrok8Piqwi'
 DISCOURSE_USER_MAP = {
     'name': ['cn'],
     'username': 'cn',
-    'external_id': 'persistent-id',
+    'external_id': 'pairwise-id',
     'email': 'mail',
     'avatar_url': 'avatar',
     'bio': 'profile',

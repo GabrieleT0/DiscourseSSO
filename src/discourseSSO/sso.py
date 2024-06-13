@@ -78,7 +78,15 @@ def user_authz():
     user_flag_filters = app.config.get('DISCOURSE_USER_FLAGS')
     email = request.environ.get(attribute_map['email'])
     email = email.split(';')[0]
-    external_id = request.environ.get(attribute_map['external_id'])
+    #external_id = request.environ.get(attribute_map['external_id'])
+    #Based on IDEM request, for now we try in a cascade way to get one of the three available ID, eduPersonTargetID as last chance
+    if request.environ.get(attribute_map['external_id']):
+        external_id = request.environ.get(attribute_map['external_id'])
+    elif request.environ.get('persistent-id'):
+        external_id = request.environ.get('persistent-id')
+    else:
+        external_id = request.environ.get('edu-person-id')
+
     if not (email and external_id):
         abort(403)
     name_list = []
