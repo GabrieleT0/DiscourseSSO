@@ -76,16 +76,38 @@ def user_authz():
     """
     attribute_map = app.config.get('DISCOURSE_USER_MAP')
     user_flag_filters = app.config.get('DISCOURSE_USER_FLAGS')
+    admins = app.config.get('ADMINS')
     email = request.environ.get(attribute_map['email'])
-    email = email.split(';')[0]
-    #external_id = request.environ.get(attribute_map['external_id'])
-    #Based on IDEM request, for now we try in a cascade way to get one of the three available ID, eduPersonTargetID as last chance
+
     if request.environ.get(attribute_map['external_id']):
         external_id = request.environ.get(attribute_map['external_id'])
     elif request.environ.get('persistent-id'):
         external_id = request.environ.get('persistent-id')
     else:
         external_id = request.environ.get('edu-person-id')
+    if request.environ.get('affiliation'):
+        affiliation = request.environ.get('affiliation')
+    
+
+    if not (email or external_id or request.environ.get('cn')):
+        return redirect("http://discourse.di.unisa.it/secure")
+
+    if ';' in email:
+        try:
+            email = email.split(';')[0]
+        except Exception as e:
+            print(e)
+    #external_id = request.environ.get(attribute_map['external_id'])
+    
+
+    #print(email)
+    #print(external_id)
+    #print(request.environ.get('cn'))
+    
+    #Only now to close the platform to all       
+    #if not (email in admins):
+    #    return redirect("http://discourse.di.unisa.it/secure/index_success.php")
+
 
     if not (email and external_id):
         abort(403)
@@ -107,11 +129,17 @@ def user_authz():
                      name, username, email)
     if 'nonce' not in session:
         abort(403)
+
+    isAdmin = 'false'
+    if email in admins:
+        isAdmin = 'true'
+
     nonce = session['nonce'].decode('utf-8')
     query = (nonce +
              '&name=' + name +
              '&username=' + username +
              '&email=' + urllib.parse.quote(email) +
+             '&admin=' + isAdmin + 
              '&external_id=' + urllib.parse.quote(external_id))
     if avatar_url:
         query = query + '&avatar_url=' + urllib.parse.quote(avatar_url)
@@ -139,6 +167,7 @@ def user_authz():
         query_b64,
         hashlib.sha256
     ).hexdigest()
+
     app.logger.debug('Signature: %s', sig)
     redirect_url = (app.config.get('DISCOURSE_URL') +
                     '/session/sso_login?'
