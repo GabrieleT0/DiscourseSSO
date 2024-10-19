@@ -20,12 +20,14 @@ for the most significant values look at the sso/default.py file
 """
 
 from flask import abort, Flask, redirect, render_template, request, url_for, \
-    session
+    session,jsonify
 import base64
 import hashlib
 import hmac
 import urllib.parse
 import re
+import sys
+import add_user_to_group
 
 app = Flask(__name__)
 app.config.from_object('discourseSSO.default.Config')
@@ -85,9 +87,6 @@ def user_authz():
         external_id = request.environ.get('persistent-id')
     else:
         external_id = request.environ.get('edu-person-id')
-    if request.environ.get('affiliation'):
-        affiliation = request.environ.get('affiliation')
-    
 
     if not (email or external_id or request.environ.get('cn')):
         return redirect("http://discourse.di.unisa.it/secure")
@@ -97,6 +96,12 @@ def user_authz():
             email = email.split(';')[0]
         except Exception as e:
             print(e)
+    
+    if request.environ.get('affiliation'):
+        bio = request.environ.get('affiliation')
+    else:
+        print(f'Affilation not provided for {email}')
+
     #external_id = request.environ.get(attribute_map['external_id'])
     
 
@@ -107,8 +112,6 @@ def user_authz():
     #Only now to close the platform to all       
     #if not (email in admins):
     #    return redirect("http://discourse.di.unisa.it/secure/index_success.php")
-
-
     if not (email and external_id):
         abort(403)
     name_list = []
@@ -124,7 +127,7 @@ def user_authz():
                     hashlib.md5(email).hexdigest()[0:4]
                     )
     avatar_url = request.environ.get(attribute_map['avatar_url'])
-    bio = request.environ.get(attribute_map['bio'])
+    #bio = request.environ.get(attribute_map['bio'])
     app.logger.debug('Authenticating "%s" with username "%s" and email "%s"',
                      name, username, email)
     if 'nonce' not in session:
@@ -185,3 +188,17 @@ def attribuete_not_provided(error):
     :type error: object
     """
     return render_template('403.html'), 403
+
+@app.route('/sso/set_private_group',methods=['POST'])
+def set_group_webhook():
+    data = request.get_json()
+    #Data about affilation are temporarily saved into the user's bio
+    affilation = data['user']['bio_raw']
+    username = data['user']['username']
+    result = add_user_to_group.add_staff_to_private_group(username,affilation)
+
+    if result:
+        add_user_to_group.clean_bio(username)
+        return jsonify({'message': 'Operation completed with success'}), 200
+    else:
+        return jsonify({'message': 'Error'}), 500

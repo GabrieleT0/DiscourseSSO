@@ -2,6 +2,8 @@ import requests
 from dotenv import load_dotenv
 import os
 
+load_dotenv()
+
 discourse_url = os.getenv('DISCOURSE_URL')
 api_key = os.getenv('API_KEY')
 admin_username = os.getenv('ADMIN_USERNAME')
@@ -9,7 +11,7 @@ admin_username = os.getenv('ADMIN_USERNAME')
 def add_staff_to_private_group(username,affilation):
     is_student = check_if_student(affilation)
     if not is_student:
-
+        url = discourse_url + '/groups' + '/47' + '/members.json'
         headers = {
         "Api-Key": api_key,
         "Api-Username": admin_username,
@@ -19,9 +21,12 @@ def add_staff_to_private_group(username,affilation):
             "usernames":f"{username}"
         }
         try:
-            response = requests.put(discourse_url, headers=headers, json=data)
+            r = requests.put(url, headers=headers, json=data)
+            
+            return True
         except Exception as e:
-            print(e)
+            print("Add to private grooup error: ",e)
+            return False
 
 def check_if_student(affilation):
     affiliation_list = affilation.split(';')
@@ -33,3 +38,23 @@ def check_if_student(affilation):
             return True
     return False
 
+def clean_bio(username):
+    username = username.lower()
+    url_request = discourse_url + '/u/' + username + '.json'
+
+    headers = {
+        "Api-Key": api_key,
+        "Api-Username": admin_username,
+    }
+
+    data = {
+        "bio_raw":""
+    }
+
+    try:
+        r = requests.put(url_request, headers=headers, json=data)
+
+        return True
+    except Exception as e:
+        print("Clean Bio error: ", e)
+        return False
