@@ -99,6 +99,7 @@ def user_authz():
     
     if request.environ.get('affiliation'):
         bio = request.environ.get('affiliation')
+        print(f"Affiliation: {bio} for {email}")
     else:
         print(f'Affilation not provided for {email}')
 
@@ -146,7 +147,7 @@ def user_authz():
              '&external_id=' + urllib.parse.quote(external_id))
     if avatar_url:
         query = query + '&avatar_url=' + urllib.parse.quote(avatar_url)
-    if bio:
+    if request.environ.get('affiliation'):
         query = query + '&bio=' + urllib.parse.quote(bio)
     flags = {}
     for user_flag in user_flag_filters:
