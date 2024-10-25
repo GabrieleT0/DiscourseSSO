@@ -2,13 +2,11 @@ import requests
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
-
 discourse_url = os.getenv('DISCOURSE_URL')
 api_key = os.getenv('API_KEY')
 admin_username = os.getenv('ADMIN_USERNAME')
 
-def add_staff_to_private_group(username,affilation):
+def add_users_to_group(username,affilation):
     is_student = check_if_student(affilation)
     if not is_student:
         url = discourse_url + '/groups' + '/47' + '/members.json'
@@ -25,7 +23,24 @@ def add_staff_to_private_group(username,affilation):
             
             return True
         except Exception as e:
-            print("Add to private grooup error: ",e)
+            print("Add to private group error: ",e)
+            return False
+    else:
+        url = discourse_url + '/groups' + '/48' + '/members.json'
+        headers = {
+        "Api-Key": api_key,
+        "Api-Username": admin_username,
+        }
+
+        data = {
+            "usernames":f"{username}"
+        }
+        try:
+            r = requests.put(url, headers=headers, json=data)
+            
+            return True
+        except Exception as e:
+            print("Add to student group error: ",e)
             return False
 
 def check_if_student(affilation):

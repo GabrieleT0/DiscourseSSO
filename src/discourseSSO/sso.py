@@ -194,12 +194,16 @@ def attribuete_not_provided(error):
 def set_group_webhook():
     data = request.get_json()
     #Data about affilation are temporarily saved into the user's bio
-    affilation = data['user']['bio_raw']
-    username = data['user']['username']
-    result = add_user_to_group.add_staff_to_private_group(username,affilation)
-
-    if result:
+    try:
+        affilation = data['user']['bio_raw']
+        username = data['user']['username']
+        result = add_user_to_group.add_users_to_group(username,affilation)
         add_user_to_group.clean_bio(username)
-        return jsonify({'message': 'Operation completed with success'}), 200
-    else:
-        return jsonify({'message': 'Error'}), 500
+        if result:
+            return jsonify({'message': 'Operation completed with success'}), 200
+        else:
+            return jsonify({'message': 'Error'}), 500
+    except Exception as e:
+        print(e)
+        add_user_to_group.clean_bio(username)
+
