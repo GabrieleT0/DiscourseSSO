@@ -48,7 +48,7 @@ def check_if_student(affilation):
     for affilation in affiliation_list:
         if 'student' in affilation:
             for affilation in affiliation_list:
-                if 'staff' in affilation:
+                if 'staff' in affilation or 'faculty' in affilation:
                     return False
             return True
     return False
