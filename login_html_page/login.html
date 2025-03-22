@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Café - NEOLAIA</title>
+    <style>
+        body {
+            font-family: "Poppins", Arial, sans-serif;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #e2f0cb, #d6f2e6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            color: #3498db;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 550px;
+        }
+        .logo img {
+            max-width: 70%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        .content p {
+            font-size: 18px;
+            color: black;
+        }
+        .content a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .button {
+            background: #3498db;
+            color: black;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .button:hover {
+            background: #c0392b;
+        }
+        .google-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            text-decoration: none;
+            margin-top: 12px;
+            width: 80;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .google-button img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        .button-shibboleth {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            text-decoration: none;
+            margin-top: 12px;
+            width: 80;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="logo"><img src="./neolaia_logo.png" alt="NEOLAIA Logo"/></div>
+        <h1>Welcome to Virtual Café - NEOLAIA</h1>
+        <div class="content">
+            <p>
+                The virtual cafés are intended to serve as informal, online meeting spaces where members can gather to share ideas, network, and collaborate in a relaxed, casual environment.
+                These virtual cafés provide a space for spontaneous interactions, fostering deeper connections and more dynamic exchanges among community members. This space will be dedicated to researchers, university staff and academics, who will be grouped into "communities of interest" based on topics, functions, or categories.
+            </p>
+            <p>This service is managed by the University of Salerno.</p>
+            <p>If you need support, please contact us at the following mail <br> <a href="mailto:virtualcafe-support-list@unisa.it">virtualcafe-support-list@unisa.it</a></p>
+    
+            <p><a href="https://discourse.di.unisa.it/privacy_policy_eng.html">Privacy policy of the service</a></p>
+            <p><a href="https://discourse.di.unisa.it/about_eng.pdf">Get more information about this service</a></p>
+        </div>
+            <a class="button-shibboleth" href="#" id="shibboleth-login"><img src="./neolaia_logo.png" alt="NEOLAIA Logo" width="100px"/> &nbsp; Partner Login</a>
+            <a href="#" class="google-button" id="google-login">
+                <img src="Google.png" alt="Google Logo">
+                Log in with Google (only for Sumy State University)
+            </a>
+        </div>
+    
+        <script>
+            // Extract SSO parameters from the URL
+            const params = new URLSearchParams(window.location.search);
+            const sso = params.get("sso");
+            const sig = params.get("sig");
+    
+            // Update login URLs dynamically
+            document.getElementById("google-login").href = `DiscourseSSO/google/sso?sso=${encodeURIComponent(sso)}&sig=${encodeURIComponent(sig)}`;
+            document.getElementById("shibboleth-login").href = `DiscourseSSO/sso/login?sso=${encodeURIComponent(sso)}&sig=${encodeURIComponent(sig)}`;
+        </script>
+</body>
+</html>

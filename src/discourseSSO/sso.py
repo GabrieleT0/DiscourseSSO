@@ -262,7 +262,7 @@ def google_oauth2_next():
 
     username, _, domain = userinfo['email'].partition('@')
     if not fnmatch.fnmatch(domain, app.config.get('GOOGLE_DOMAIN')):
-        abort(400)
+        abort(401)
         #return _redirect_to_google_auth(payload)
 
     payload['external_id'] = userinfo['sub']
