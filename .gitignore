@@ -58,3 +58,6 @@ target/
 
 # PyCharm
 .idea/
+venv/
+.*
+config-prod.py

@@ -16,18 +16,17 @@
 """
 SSO FLASK Application for Discourse main configuration file
 """
-
 # Discourse URL to send the user back
-DISCOURSE_URL = 'http://discuss.example.com'
+DISCOURSE_URL = ''
 
 # Secret key shared with the Discourse server
-DISCOURSE_SECRET_KEY = 'd836444a9e4084d5b224a60c208dce14'
-
+DISCOURSE_SECRET_KEY = b''
+DISCOURSE_SECRET_KEY_STR = ''
 # Attribute to read from the environment after user validation
 DISCOURSE_USER_MAP = {
-    'name': ['givenName', 'sn'],
-    'username': 'username',
-    'external_id': 'eppn',
+    'name': ['cn'],
+    'username': 'cn',
+    'external_id': 'pairwise-id',
     'email': 'mail',
     'avatar_url': 'avatar',
     'bio': 'profile',
@@ -47,8 +46,13 @@ DISCOURSE_USER_FLAGS = [
         'value': 'false',
         'filter': 'eppn=^my.name@my.idp$',
     },
-    {
-        'name': 'admin',
-        'value': 'false',
-    },
+   # {
+   #     'name': 'admin',
+   #     'value': 'false',
+   # },
+]
+
+# Admins of the Discourse server
+ADMINS = [
+
 ]
