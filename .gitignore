@@ -58,6 +58,8 @@ target/
 
 # PyCharm
 .idea/
-venv/
+.devcontainer/
+src/discourseSSO/.env
+venvvenv/
 .*
 config-prod.py

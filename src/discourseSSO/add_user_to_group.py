@@ -2,8 +2,11 @@ import requests
 from dotenv import load_dotenv
 import os
 
+<<<<<<< HEAD
 load_dotenv('/var/www/html/DiscourseSSO/src/discourseSSO/.env')
 
+=======
+>>>>>>> 1b6cc699d282ed3779cada9b3d600f5ecc63c1ba
 discourse_url = os.getenv('DISCOURSE_URL')
 api_key = os.getenv('API_KEY')
 admin_username = os.getenv('ADMIN_USERNAME')
@@ -50,7 +53,11 @@ def check_if_student(affilation):
     for affilation in affiliation_list:
         if 'student' in affilation:
             for affilation in affiliation_list:
+<<<<<<< HEAD
                 if 'staff' in affilation or 'faculty' in affilation or 'employee' in affilation:
+=======
+                if 'staff' in affilation or 'faculty' in affilation:
+>>>>>>> 1b6cc699d282ed3779cada9b3d600f5ecc63c1ba
                     return False
             return True
     return False

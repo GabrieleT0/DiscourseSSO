@@ -20,8 +20,8 @@ SSO FLASK Application for Discourse main configuration file
 DISCOURSE_URL = ''
 
 # Secret key shared with the Discourse server
-DISCOURSE_SECRET_KEY = b''
-DISCOURSE_SECRET_KEY_STR = ''
+DISCOURSE_SECRET_KEY = ''
+
 # Attribute to read from the environment after user validation
 DISCOURSE_USER_MAP = {
     'name': ['cn'],

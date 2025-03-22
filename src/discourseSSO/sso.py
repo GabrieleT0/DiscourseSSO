@@ -21,9 +21,11 @@ for the most significant values look at the sso/default.py file
 
 from flask import abort, Flask, redirect, render_template, request, url_for, \
     session,jsonify
+    session,jsonify
 import base64
 import hashlib
 import hmac
+import urllib.parse
 import urllib.parse
 import re
 import sys
@@ -88,6 +90,7 @@ def user_authz():
     """
     attribute_map = app.config.get('DISCOURSE_USER_MAP')
     user_flag_filters = app.config.get('DISCOURSE_USER_FLAGS')
+    admins = app.config.get('ADMINS')
     admins = app.config.get('ADMINS')
     email = request.environ.get(attribute_map['email'])
 
@@ -160,6 +163,9 @@ def user_authz():
              '&admin=' + isAdmin + 
              '&external_id=' + urllib.parse.quote(external_id))
     if avatar_url:
+        query = query + '&avatar_url=' + urllib.parse.quote(avatar_url)
+    if request.environ.get('affiliation'):
+        query = query + '&bio=' + urllib.parse.quote(bio)
         query = query + '&avatar_url=' + urllib.parse.quote(avatar_url)
     if request.environ.get('affiliation'):
         query = query + '&bio=' + urllib.parse.quote(bio)
