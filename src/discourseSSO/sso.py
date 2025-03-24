@@ -215,7 +215,11 @@ def set_group_webhook():
     data = request.get_json()
     #Data about affilation are temporarily saved into the user's bio
     try:
-        affilation = data['user']['bio_raw']
+        if 'sumdu.edu.ua' in data['user']['email']:
+            affilation = data['user']['email']
+            affilation += ';'
+        else:
+            affilation = data['user']['bio_raw']
         username = data['user']['username']
         result = add_user_to_group.add_users_to_group(username,affilation)
         add_user_to_group.clean_bio(username)
@@ -261,7 +265,7 @@ def google_oauth2_next():
     userinfo = json.loads(userinfo)
 
     username, _, domain = userinfo['email'].partition('@')
-    if not fnmatch.fnmatch(domain, app.config.get('GOOGLE_DOMAIN')):
+    if not fnmatch.fnmatch(domain, app.config.get('GOOGLE_DOMAIN')) or 'sumdu.edu.ua' not in domain::
         abort(401)
         #return _redirect_to_google_auth(payload)
 
